@@ -10,4 +10,8 @@ public class KitConfig {
     public KitConfig(List<Kit> kits) {
         this.kits = kits;
     }
+
+    public Kit findKit(String name){
+        return kits.stream().filter(it -> it.getName().equalsIgnoreCase(name)).findFirst().orElse(null);
+    }
 }

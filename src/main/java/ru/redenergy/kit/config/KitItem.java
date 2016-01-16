@@ -1,5 +1,6 @@
 package ru.redenergy.kit.config;
 
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class KitItem {
@@ -10,9 +11,9 @@ public class KitItem {
 
     private int amount;
 
-    private NBTTagCompound nbt;
+    private NBTBase nbt;
 
-    public KitItem(String item, int metadata, int amount, NBTTagCompound nbt) {
+    public KitItem(String item, int metadata, int amount, NBTBase nbt) {
         this.item = item;
         this.metadata = metadata;
         this.amount = amount;
@@ -31,7 +32,7 @@ public class KitItem {
         return amount;
     }
 
-    public NBTTagCompound getNbt() {
+    public NBTBase getNBT() {
         return nbt;
     }
 }

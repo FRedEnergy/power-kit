@@ -7,15 +7,27 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
+import org.apache.commons.lang3.time.DurationFormatUtils;
 import ru.redenergy.kit.PlayerKitData;
 import ru.redenergy.kit.PowerKit;
 import ru.redenergy.kit.config.Kit;
 import ru.redenergy.kit.config.KitItem;
 import ru.redenergy.vault.ForgeVault;
 
+import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 public class PowerKitCommand extends CommandBase{
 
     private static final String PERMISSION_NODE = "powerkit.%s";
+
+    @Override
+    public int getRequiredPermissionLevel() {
+        return 1;
+    }
+
     @Override
     public String getCommandName() {
         return "pkit";
@@ -47,10 +59,18 @@ public class PowerKitCommand extends CommandBase{
         Kit kit = PowerKit.instance.getConfig().findKit(kitName);
         if(kit == null){
             sender.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + "Unknown kit `" + kitName +"`"));
+            displayAvailableKits(sender);
         } else {
             EntityPlayer player = MinecraftServer.getServer().getConfigurationManager().func_152612_a(sender.getCommandSenderName());
             giveKit(player, kit);
         }
+    }
+
+    private void displayAvailableKits(ICommandSender sender){
+        sender.addChatMessage(new ChatComponentText(EnumChatFormatting.GOLD + "Available kits: " +
+                String.join(",", PowerKit.instance.getConfig().getKits().stream()
+                        .map(it -> it.getName()).collect(Collectors.toList())
+                        .toArray(new String[0]))));
     }
 
     private void giveKit(EntityPlayer player, Kit kit){
@@ -63,13 +83,17 @@ public class PowerKitCommand extends CommandBase{
         if(data.getKitTimestamps().containsKey(kit.getName())){
             long sinceLastUse = System.currentTimeMillis() - data.getKitTimestamps().get(kit.getName());
             if(sinceLastUse / 1000L < kit.getInterval()){ //because interval is stored in seconds we must convert milliseconds to second by dividing them by 1000
-                player.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + "This kit has been already used"));
+                player.addChatMessage(new ChatComponentText
+                        (EnumChatFormatting.RED + "You have to wait " +
+                        DurationFormatUtils.formatDuration(kit.getInterval() * 1000L - sinceLastUse, "H:m:s") +
+                        " before using `" + kit.getName() +"` kit again"));
                 return;
             }
         }
         kit.getItems().stream().map(KitItem::createItemStack).forEach(player.inventory::addItemStackToInventory);
         data.getKitTimestamps().put(kit.getName(), System.currentTimeMillis());
     }
+
 
 
 }

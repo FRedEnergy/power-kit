@@ -52,8 +52,10 @@ public class KitItem {
         String[] identifier = item.split(":");
         Item item = GameRegistry.findItem(identifier[0], identifier[1]);
         ItemStack stack = new ItemStack(item, amount, metadata);
-        stack.stackTagCompound = (NBTTagCompound) nbt;
-        EnchantmentHelper.setEnchantments(enchantments, stack);
+        if(nbt != null)
+            stack.stackTagCompound = (NBTTagCompound) nbt;
+        if(enchantments != null)
+            EnchantmentHelper.setEnchantments(enchantments, stack);
         return stack;
     }
 }

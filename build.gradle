@@ -40,8 +40,24 @@ minecraft {
     runDir = "eclipse"
 }
 
+configurations {
+    shade
+    compile.extendsFrom shade
+}
+
 dependencies {
-    compile 'com.github.FRedEnergy:forge-vault:-SNAPSHOT'
+    shade 'com.github.FRedEnergy:forge-vault:c2d5527281'
+}
+
+jar {
+    configurations.shade.each{
+        if(it.getName().contains("forge-vault")){ //we need to shade only Forge Vault, not it's transitives
+            from(project.zipTree(it)) {
+                exclude 'META-INF/**'
+            }
+        }
+        println(it.getAbsolutePath())
+    }
 }
 
 compileJava {

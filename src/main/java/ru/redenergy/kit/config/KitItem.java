@@ -1,10 +1,13 @@
 package ru.redenergy.kit.config;
 
 import cpw.mods.fml.common.registry.GameRegistry;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
+
+import java.util.Map;
 
 public class KitItem {
 
@@ -14,12 +17,14 @@ public class KitItem {
 
     private int amount;
 
+    private Map<Integer, Integer> enchantments;
     private NBTBase nbt;
 
-    public KitItem(String item, int metadata, int amount, NBTBase nbt) {
+    public KitItem(String item, int metadata, int amount,  Map<Integer, Integer> enchantments, NBTBase nbt) {
         this.item = item;
         this.metadata = metadata;
         this.amount = amount;
+        this.enchantments = enchantments;
         this.nbt = nbt;
     }
 
@@ -35,6 +40,10 @@ public class KitItem {
         return amount;
     }
 
+    public Map<Integer, Integer> getEnchantments() {
+        return enchantments;
+    }
+
     public NBTBase getNBT() {
         return nbt;
     }
@@ -44,6 +53,7 @@ public class KitItem {
         Item item = GameRegistry.findItem(identifier[0], identifier[1]);
         ItemStack stack = new ItemStack(item, amount, metadata);
         stack.stackTagCompound = (NBTTagCompound) nbt;
+        EnchantmentHelper.setEnchantments(enchantments, stack);
         return stack;
     }
 }

@@ -2,15 +2,24 @@ package ru.redenergy.kit.config;
 
 import java.util.List;
 
+/**
+ * Represents one item kit
+ */
 public class Kit {
 
+    /**
+     * Kit identifier
+     */
     private String name;
 
     /**
-     * In seconds
+     * Interval between kit uses in seconds
      */
     private long interval;
 
+    /**
+     * List of items available in this kit
+     */
     private List<KitItem> items;
 
     public Kit(String name, long interval, List<KitItem> items) {

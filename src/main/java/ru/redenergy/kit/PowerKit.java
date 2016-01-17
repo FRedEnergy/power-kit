@@ -22,6 +22,13 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 
+/**
+ * @author RedEnergy <forwot163@gmail.com>
+ *
+ * Power Kit Mod
+ *
+ * Minecraft mod based on Forge Mod Loader which allows administrators to define item kits
+ */
 @Mod(modid = "power-kit", acceptableRemoteVersions = "*")
 public class PowerKit {
 
@@ -36,13 +43,21 @@ public class PowerKit {
         MinecraftForge.EVENT_BUS.register(handler);
         FMLCommonHandler.instance().bus().register(handler);
 
-        Gson gson = new GsonBuilder().registerTypeAdapter(NBTBase.class, new NBTDeserializer()).create();
-        config = gson.fromJson(new JsonParser().parse(new JsonReader(new FileReader(new File(event.getModConfigurationDirectory(), "kit.json")))), KitConfig.class);
+        loadConfig(new File(event.getModConfigurationDirectory(), "kit.json"));
     }
 
     @Mod.EventHandler
     public void serverStart(FMLServerStartingEvent event){
         event.registerServerCommand(new PowerKitCommand());
+    }
+
+    /**
+     * Loads kit config from given json file <br>
+     * Take a look at README.md for more information about config structure
+     */
+    private void loadConfig(File file) throws FileNotFoundException {
+        Gson gson = new GsonBuilder().registerTypeAdapter(NBTBase.class, new NBTDeserializer()).create();
+        config = gson.fromJson(new FileReader(file), KitConfig.class);
     }
 
     public KitConfig getConfig() {

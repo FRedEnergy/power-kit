@@ -27,7 +27,7 @@ public class PowerKit {
 
     private KitConfig config;
 
-    @Mod.Instance
+    @Mod.Instance("power-kit")
     public static PowerKit instance;
 
     @Mod.EventHandler

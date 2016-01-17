@@ -11,7 +11,11 @@ public class KitConfig {
         this.kits = kits;
     }
 
-    public Kit findKit(String name){
+    public Kit findKit(String name) {
         return kits.stream().filter(it -> it.getName().equalsIgnoreCase(name)).findFirst().orElse(null);
+    }
+
+    public List<Kit> getKits() {
+        return kits;
     }
 }

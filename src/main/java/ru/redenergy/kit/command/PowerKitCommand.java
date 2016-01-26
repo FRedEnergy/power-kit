@@ -1,5 +1,7 @@
 package ru.redenergy.kit.command;
 
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.annotations.Expose;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
@@ -14,6 +16,7 @@ import ru.redenergy.kit.config.Kit;
 import ru.redenergy.kit.config.KitItem;
 import ru.redenergy.vault.ForgeVault;
 
+import java.io.FileNotFoundException;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.util.Arrays;
@@ -35,7 +38,7 @@ public class PowerKitCommand extends CommandBase{
 
     @Override
     public String getCommandUsage(ICommandSender p_71518_1_) {
-        return "/pkit <name>|info";
+        return "/pkit <name>|info|reload";
     }
 
     @Override
@@ -43,8 +46,19 @@ public class PowerKitCommand extends CommandBase{
         if(args.length == 0) return;
         if("info".equalsIgnoreCase(args[0])){
             displayCurrentItemNbt(sender);
+        } else if("reload".equalsIgnoreCase(args[0])) {
+            performConfigReload(sender);
         } else {
             proccessKitRequest(sender, args[0]);
+        }
+    }
+
+    private void performConfigReload(ICommandSender sender) {
+        try {
+            PowerKit.instance.loadConfig(PowerKit.instance.getConfigFile());
+        } catch (Exception e){
+            sender.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + "Error while reloading Power Kit, see console"));
+            e.printStackTrace();
         }
     }
 

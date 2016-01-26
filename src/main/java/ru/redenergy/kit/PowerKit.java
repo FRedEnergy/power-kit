@@ -33,6 +33,7 @@ import java.io.FileReader;
 public class PowerKit {
 
     private KitConfig config;
+    private File configFile;
 
     @Mod.Instance("power-kit")
     public static PowerKit instance;
@@ -43,7 +44,8 @@ public class PowerKit {
         MinecraftForge.EVENT_BUS.register(handler);
         FMLCommonHandler.instance().bus().register(handler);
 
-        loadConfig(new File(event.getModConfigurationDirectory(), "kit.json"));
+        configFile = new File(event.getModConfigurationDirectory(), "kit.json");
+        loadConfig(configFile);
     }
 
     @Mod.EventHandler
@@ -55,12 +57,16 @@ public class PowerKit {
      * Loads kit config from given json file <br>
      * Take a look at README.md for more information about config structure
      */
-    private void loadConfig(File file) throws FileNotFoundException {
+    public void loadConfig(File file) throws FileNotFoundException {
         Gson gson = new GsonBuilder().registerTypeAdapter(NBTBase.class, new NBTDeserializer()).create();
         config = gson.fromJson(new FileReader(file), KitConfig.class);
     }
 
     public KitConfig getConfig() {
         return config;
+    }
+
+    public File getConfigFile() {
+        return configFile;
     }
 }

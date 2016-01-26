@@ -12,7 +12,8 @@ public class NBTDeserializer implements JsonDeserializer<NBTBase> {
     @Override
     public NBTBase deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         try {
-            return json != null ? JsonToNBT.func_150315_a(json.toString()) : null;
+            String nbt = json.toString().replace("\"", "");
+            return json != null ? JsonToNBT.func_150315_a(nbt) : null;
         } catch (NBTException e) {
             e.printStackTrace();
         }

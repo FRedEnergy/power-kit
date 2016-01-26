@@ -47,7 +47,9 @@ public class PowerKitCommand extends CommandBase{
         if("info".equalsIgnoreCase(args[0])){
             displayCurrentItemNbt(sender);
         } else if("reload".equalsIgnoreCase(args[0])) {
-            performConfigReload(sender);
+            if(ForgeVault.getPermission().has((String)null, sender.getCommandSenderName(), "powerkit.admin.reload")) {
+                performConfigReload(sender);
+            }
         } else {
             proccessKitRequest(sender, args[0]);
         }

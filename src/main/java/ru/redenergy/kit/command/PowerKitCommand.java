@@ -1,7 +1,5 @@
 package ru.redenergy.kit.command;
 
-import com.google.gson.JsonSyntaxException;
-import com.google.gson.annotations.Expose;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
@@ -16,10 +14,6 @@ import ru.redenergy.kit.config.Kit;
 import ru.redenergy.kit.config.KitItem;
 import ru.redenergy.vault.ForgeVault;
 
-import java.io.FileNotFoundException;
-import java.text.SimpleDateFormat;
-import java.time.Duration;
-import java.util.Arrays;
 import java.util.stream.Collectors;
 
 public class PowerKitCommand extends CommandBase{
@@ -74,7 +68,7 @@ public class PowerKitCommand extends CommandBase{
     private void proccessKitRequest(ICommandSender sender, String kitName){
         Kit kit = PowerKit.instance.getConfig().findKit(kitName);
         if(kit == null){
-            sender.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + "Unknown kit `" + kitName +"`"));
+            sender.addChatMessage(new ChatComponentText(String.format(PowerKit.instance.unknownKitMessage, kitName)));
             displayAvailableKits(sender);
         } else {
             EntityPlayer player = MinecraftServer.getServer().getConfigurationManager().func_152612_a(sender.getCommandSenderName());
@@ -83,15 +77,15 @@ public class PowerKitCommand extends CommandBase{
     }
 
     private void displayAvailableKits(ICommandSender sender){
-        sender.addChatMessage(new ChatComponentText(EnumChatFormatting.GOLD + "Available kits: " +
-                String.join(",", PowerKit.instance.getConfig().getKits().stream()
-                        .map(it -> it.getName()).collect(Collectors.toList())
-                        .toArray(new String[0]))));
+        String availableKits = String.join(",", PowerKit.instance.getConfig().getKits().stream()
+                .map(Kit::getName).collect(Collectors.toList())
+                .toArray(new String[0]));
+        sender.addChatMessage(new ChatComponentText(String.format(PowerKit.instance.availableKitsMessage, availableKits)));
     }
 
     private void giveKit(EntityPlayer player, Kit kit){
         if(!ForgeVault.getPermission().has((String)null, player.getCommandSenderName(), String.format(PERMISSION_NODE, kit.getName()))){
-            player.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + "Not enough permissions"));
+            player.addChatMessage(new ChatComponentText(PowerKit.instance.notEnoughPermissions));
             return;
         }
 
@@ -99,10 +93,8 @@ public class PowerKitCommand extends CommandBase{
         if(data.getKitTimestamps().containsKey(kit.getName())){
             long sinceLastUse = System.currentTimeMillis() - data.getKitTimestamps().get(kit.getName());
             if(sinceLastUse / 1000L < kit.getInterval()){ //because interval is stored in seconds we must convert milliseconds to second by dividing them by 1000
-                player.addChatMessage(new ChatComponentText
-                        (EnumChatFormatting.RED + "You have to wait " +
-                        DurationFormatUtils.formatDuration(kit.getInterval() * 1000L - sinceLastUse, "H:m:s") +
-                        " before using `" + kit.getName() +"` kit again"));
+                String timeLeft = DurationFormatUtils.formatDuration(kit.getInterval() * 1000L - sinceLastUse, "H:m");
+                player.addChatMessage(new ChatComponentText(String.format(PowerKit.instance.waitMessage, timeLeft, kit.getName())));
                 return;
             }
         }

@@ -54,8 +54,8 @@ public class PowerKit {
 
         configFile = new File(event.getModConfigurationDirectory(), "kit.json");
         loadConfig(configFile);
-        File modConfigFile = event.getSuggestedConfigurationFile();
-        loadLocalization(modConfigFile);
+
+        loadLocalization(event.getSuggestedConfigurationFile());
     }
 
     @Mod.EventHandler

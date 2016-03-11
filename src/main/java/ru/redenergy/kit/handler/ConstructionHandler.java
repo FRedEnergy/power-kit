@@ -19,7 +19,7 @@ public class ConstructionHandler {
     public void constriction(EntityEvent.EntityConstructing event){
         if(event.entity instanceof EntityPlayer){
             if(PlayerKitData.ofPlayer((EntityPlayer) event.entity) == null){
-                ((EntityPlayer) event.entity).registerExtendedProperties(PlayerKitData.IDENTIFIER, new PlayerKitData());
+                event.entity.registerExtendedProperties(PlayerKitData.IDENTIFIER, new PlayerKitData());
             }
         }
     }
